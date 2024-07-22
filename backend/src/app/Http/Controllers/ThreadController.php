@@ -16,7 +16,13 @@ class ThreadController extends Controller
      */
     public function index()
     {
-        $threads = Thread::all();
+        $threads = Thread::with([
+            'responses' => function ($query) {
+                $query->latest()->limit(10);
+            },
+        ])
+            ->withCount('responses')
+            ->get();
 
         return ThreadWithResponseResource::collection($threads);
     }
